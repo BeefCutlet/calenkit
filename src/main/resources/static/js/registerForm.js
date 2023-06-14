@@ -1,5 +1,5 @@
 //도메인 주소
-const domainURL = "http://localhost:8080";
+const domainURL = "";
 
 //프로필 이미지 검증
 let profileImageConfirm = true;
