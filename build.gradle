@@ -37,6 +37,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	//Feign 라이브러리
 	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
+	//AWS S3 라이브리러ㅣ
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	//websocket 사용을 위한 라이브러리 - 참고 : https://spring.io/guides/gs/messaging-stomp-websocket/
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
