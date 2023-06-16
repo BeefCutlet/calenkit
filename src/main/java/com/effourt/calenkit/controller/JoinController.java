@@ -50,8 +50,8 @@ public class JoinController {
         //비밀번호를 암호화
         member.setMemPw(passwordEncoder.encode(member.getMemPw()));
         try {
-            String filename = imageUpload.uploadImage(profileImage);
-            member.setMemImage(filename);
+            String fileUrl = imageUpload.uploadImage(profileImage);
+            member.setMemImage(fileUrl);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
