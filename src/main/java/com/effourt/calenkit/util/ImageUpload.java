@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.UUID;
 
 
@@ -27,8 +29,10 @@ public class ImageUpload {
 
     public String uploadImage(MultipartFile multipartFile) throws IOException {
         //고유 ID값을 부여해서 이미지 이름 중복되지 않게 처리.
-        String filename = UUID.randomUUID().toString() + "_" + multipartFile.getOriginalFilename();
+        String filename = UUID.randomUUID().toString() + "_" + URLEncoder.encode(multipartFile.getOriginalFilename());
         String filePath = OBJECT_PATH + "/" + filename;
+        log.info("filename=" + filename);
+        log.info("filePath=" + filePath);
 
         //로컬에 파일 저장
         String localFilePath = System.getProperty("user.home") + "/" + OBJECT_PATH;
@@ -39,13 +43,15 @@ public class ImageUpload {
 
         File file = new File(localFilePath + "/" + filename);
         if (!file.exists()) {
-            file.createNewFile();
+            multipartFile.transferTo(file);
         }
 
         //AWS S3에 파일 저장
         PutObjectRequest objectRequest = new PutObjectRequest(bucket, filePath, file);
-
         amazonS3Client.putObject(objectRequest);
+
+        //로컬 파일 삭제
+        file.delete();
 
         return amazonS3Client.getUrl(bucket, filePath).toString();
     }
