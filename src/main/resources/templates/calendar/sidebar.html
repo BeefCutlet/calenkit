@@ -14,19 +14,14 @@
 <body>
 <div th:fragment="sidebar">
     <div class="menu text-white" tabindex="0">
-        <header class="avatar" id="mypageBtn" style="cursor:pointer;">
-            <img class="img-fluid" src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80" th:if="${loginMember?.memImage.startsWith('http')}"
-                 th:src="${loginMember?.memImage}"/>
-            <img class="img-fluid" src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80"
-                 th:if="${!loginMember?.memImage.startsWith('http')}"
-                 th:src="@{/img/} + ${loginMember?.memImage}"/>
-            <p class="mt-3">[[${loginMember.memId}]]</p>
-        </header>
+        <div class="avatar" id="mypageBtn" style="cursor:pointer;">
+            <img class="img-fluid" th:src="${loginMember.memImage}"/>
+            <p class="mt-3" th:text="${loginMember.memId}"></p>
+        </div>
         <div class="ul">
             <!-- alarm -->
             <div class="icon-alarm li" data-bs-target="#alarmBox" data-bs-toggle="collapse" tabindex="0">
                 <span class="w-75" id="alarm">알림</span>&nbsp;&nbsp;&nbsp;
-                <!--                <span class="badge bg-secondary">4</span>-->
             </div>
 
             <div class="collapse" id="alarmBox">
