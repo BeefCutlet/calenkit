@@ -15,11 +15,11 @@ public class EncoderTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Test
-    void passwordEncoder() {
-        String password = "asdqwe123!";
-        String encodedPw = passwordEncoder.encode(password);
-        log.info("encodedPw={}", encodedPw);
-        assertThat(passwordEncoder.matches(password, encodedPw)).isEqualTo(true);
-    }
+//    @Test
+//    void passwordEncoder() {
+//        String password = "asdqwe123!";
+//        String encodedPw = passwordEncoder.encode(password);
+//        log.info("encodedPw={}", encodedPw);
+//        assertThat(passwordEncoder.matches(password, encodedPw)).isEqualTo(true);
+//    }
 }

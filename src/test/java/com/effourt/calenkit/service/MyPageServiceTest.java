@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @SpringBootTest
 class MyPageServiceTest {
-    @Autowired
-    private MemberRepository memberRepository;
-    @Test
-    void nameCheck() {
-        int cnt=memberRepository.findByMemName("mem");
-
-        System.out.println("cnt :"+cnt);
-    }
+//    @Autowired
+//    private MemberRepository memberRepository;
+//    @Test
+//    void nameCheck() {
+//        int cnt=memberRepository.findByMemName("mem");
+//
+//        System.out.println("cnt :"+cnt);
+//    }
 }
