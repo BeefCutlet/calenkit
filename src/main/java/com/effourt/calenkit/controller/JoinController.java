@@ -46,14 +46,16 @@ public class JoinController {
      */
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public String join(@RequestPart Member member, @RequestPart MultipartFile profileImage, HttpSession session) {
+    public String join(@RequestPart Member member, @RequestPart(required = false) MultipartFile profileImage, HttpSession session) {
         //비밀번호를 암호화
         member.setMemPw(passwordEncoder.encode(member.getMemPw()));
-        try {
-            String fileUrl = imageUpload.uploadImage(profileImage);
-            member.setMemImage(fileUrl);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (profileImage != null && !profileImage.isEmpty()) {
+            try {
+                String fileUrl = imageUpload.uploadImage(profileImage);
+                member.setMemImage(fileUrl);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         //아이디(이메일), 프로필 이미지, 닉네임, 비밀번호를 회원 테이블에 저장
