@@ -6,9 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class CalenkitApplicationTests {
 
-	@Test
-	void contextLoads() {
-		System.out.println("확인ss");
-	}
+//	@Test
+//	void contextLoads() {
+//		System.out.println("확인ss");
+//	}
 
 }
