@@ -89,7 +89,7 @@ $("#findPasswordId").change(function () {
 $("#kakaoLogin").click(function () {
     location.href="https://kauth.kakao.com/oauth/authorize" +
         "?client_id=6d49b86907e3887ab27ba34050122bd1" +
-        "&redirect_uri=http://localhost:8080/login/kakao" +
+        "&redirect_uri=http://3.34.25.30/login/kakao" +
         "&response_type=code" +
         "&scope=profile_nickname,profile_image,account_email";
 });
