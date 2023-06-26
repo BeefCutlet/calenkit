@@ -84,7 +84,7 @@ public class LoginController {
         AccessTokenRequest accessTokenRequest = AccessTokenRequest.builder()
                 .clientId("ce578a556d58e95706684b75a588e1b5")
                 .grantType("authorization_code")
-                .redirectUri("http://localhost:8080/login/kakao")
+                .redirectUri("http://3.34.25.30/login/kakao")
                 .code(code)
                 .build();
         //Access 토큰 발급
