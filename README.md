@@ -9,6 +9,9 @@
 - 이진규 : 회원 개인정보 관리(마이페이지), 회원 관리(관리자페이지), 이미지 전송 기능
 - 오세욱 : 카카오 소셜로그인, 회원가입, 이메일 전송 기능
 
+## System Structure
+![image](https://github.com/BeefCutlet/calenkit/assets/77325024/0ad5fbfa-82dc-4be8-b4b6-2e4ef73dd0c1)
+
 ## 📙WIKI
 - calenkit의 부가적 설명은 WIKI를 이용했습니다.
 - [calenkit WIKI](https://github.com/effourt/calenkit/wiki) 내용을 참고해주세요.
