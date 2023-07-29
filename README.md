@@ -10,7 +10,7 @@
 - 오세욱 : 카카오 소셜로그인, 회원가입, 이메일 전송 기능
 
 ## System Structure
-![image](https://github.com/BeefCutlet/calenkit/assets/77325024/fb268dd3-e059-4c17-83e2-f112379a5511)
+![image](https://github.com/BeefCutlet/calenkit/assets/77325024/9c35b367-41cd-438d-9af8-3995298365e3)
 
 ## 📙WIKI
 - calenkit의 부가적 설명은 WIKI를 이용했습니다.
