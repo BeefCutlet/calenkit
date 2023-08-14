@@ -30,21 +30,14 @@ public class JoinService {
      * 소셜로그인 시 회원가입
      * 액세스 토큰, 리프레시 토큰 저장 및 회원 정보 저장
      * @param authUserInfoResponse 저장할 회원 정보
-     * @param accessTokenResponse 저장할 액세스 토큰, 리프레스 토큰 정보
      * @return 저장된 회원 정보
      */
     @Transactional
-    public Member joinBySns(AuthUserInfoResponse authUserInfoResponse, AccessTokenResponse accessTokenResponse) {
-        Auth auth = new Auth();
-        auth.setAuthRefresh(accessTokenResponse.getRefreshToken());
-        auth.setAuthAccess(accessTokenResponse.getAccessToken());
-        authRepository.save(auth);
-
+    public Member joinBySns(AuthUserInfoResponse authUserInfoResponse) {
         Member member = new Member();
         member.setMemId(authUserInfoResponse.getEmail());
         member.setMemName(authUserInfoResponse.getNickname());
         member.setMemImage(authUserInfoResponse.getProfileImage());
-        member.setMemAuthId(auth.getAuthId());
         memberRepository.save(member);
         return member;
     }

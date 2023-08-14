@@ -10,6 +10,7 @@ import com.effourt.calenkit.dto.AuthUserInfoResponse;
 import com.effourt.calenkit.exception.MemberNotFoundException;
 import com.effourt.calenkit.repository.AuthRepository;
 import com.effourt.calenkit.repository.MemberRepository;
+import com.effourt.calenkit.domain.type.LoginType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,21 +103,21 @@ public class LoginService {
      * PASSWORD_LOGIN : 비밀번호로 로그인, CODE_LOGIN : 로그인 코드로 로그인, JOIN_LOGIN : 회원가입 코드로 회원가입 후 로그인
      */
     @Transactional
-    public String checkMember(String memberId) {
+    public String checkLoginType(String memberId) {
         Member member = memberRepository.findByMemId(memberId);
         String loginType = "";
         if (member == null || member.getMemStatus() == 0) {
             //아이디 존재 X, 비밀번호 존재 X
             //회원가입 코드 생성 및 메일 전송
-            loginType = "JOIN_LOGIN";
+            loginType = LoginType.JOIN_LOGIN.toString();
         } else if (member != null && member.getMemStatus() != 0) {
             if (member.getMemPw() != null) {
                 //아이디 존재 O, 비밀번호 존재 O
-                loginType = "PASSWORD_LOGIN";
+                loginType = LoginType.PASSWORD_LOGIN.toString();
             } else if (member.getMemPw() == null) {
                 //아이디 존재 O, 비밀번호 존재 X
                 //로그인 코드 생성 및 메일 전송
-                loginType = "CODE_LOGIN";
+                loginType = LoginType.CODE_LOGIN.toString();
             }
         }
 
@@ -151,8 +152,7 @@ public class LoginService {
         AuthUserInfoResponse userInfo = new AuthUserInfoResponse();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = null;
-            jsonNode = objectMapper.readTree(userInfoString);
+            JsonNode jsonNode = objectMapper.readTree(userInfoString);
             userInfo.setId(jsonNode.get("id").asLong());
             userInfo.setEmail(jsonNode.get("kakao_account").get("email").asText());
             userInfo.setNickname(jsonNode.get("kakao_account").get("profile").get("nickname").asText());
@@ -161,10 +161,8 @@ public class LoginService {
             throw new RuntimeException(e);
         }
 
-        log.info("userId={}", userInfo.getId());
-        log.info("userEmail={}", userInfo.getEmail());
-        log.info("userNickname={}", userInfo.getNickname());
-        log.info("userProfileImage={}", userInfo.getProfileImage());
+        log.info("userId={}, userEmail={}, userNickname={}, userProfileImage={}"
+                , userInfo.getId(), userInfo.getEmail(), userInfo.getNickname(), userInfo.getProfileImage());
         return userInfo;
     }
 
