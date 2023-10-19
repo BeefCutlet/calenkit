@@ -33,15 +33,6 @@ public class LoginService {
     private final KakaoApiClient kakaoApiClient;
 
     /**
-     * Member 테이블에 회원 정보 저장
-     * @param member 저장할 회원 정보
-     */
-    @Transactional
-    public void saveMember(Member member) {
-        memberRepository.save(member);
-    }
-
-    /**
      * 회원 비밀번호 UPDATE
      * @param memId 비밀번호를 갱신할 회원 아이디
      * @param password 갱신할 비밀번호

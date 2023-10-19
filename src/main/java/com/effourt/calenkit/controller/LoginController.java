@@ -1,11 +1,7 @@
 package com.effourt.calenkit.controller;
 
-import com.effourt.calenkit.domain.Auth;
 import com.effourt.calenkit.domain.Member;
-import com.effourt.calenkit.dto.AccessTokenRequest;
-import com.effourt.calenkit.dto.AccessTokenResponse;
-import com.effourt.calenkit.dto.AuthUserInfoResponse;
-import com.effourt.calenkit.dto.EmailMessage;
+import com.effourt.calenkit.dto.*;
 import com.effourt.calenkit.exception.CodeMismatchException;
 import com.effourt.calenkit.exception.MemberNotFoundException;
 import com.effourt.calenkit.service.JoinService;
@@ -13,6 +9,7 @@ import com.effourt.calenkit.service.LoginService;
 import com.effourt.calenkit.util.EmailSend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -32,6 +29,9 @@ public class LoginController {
     private final MessageSource ms;
     private final EmailSend emailSend;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${kakao.client-id}")
+    private String kakaoClientId;
 
     /**
      * 로그인 페이지로 이동
@@ -80,11 +80,10 @@ public class LoginController {
      */
     @GetMapping("/kakao")
     public String loginByKakao(@RequestParam String code, HttpSession session) {
-        log.info("code={}", code);
         AccessTokenRequest accessTokenRequest = AccessTokenRequest.builder()
-                .clientId("ce578a556d58e95706684b75a588e1b5")
+                .clientId(kakaoClientId)
                 .grantType("authorization_code")
-                .redirectUri("http://3.34.25.30/login/kakao")
+                .redirectUri("http://localhost:8080/login/kakao")
                 .code(code)
                 .build();
         //Access 토큰 발급
@@ -93,35 +92,18 @@ public class LoginController {
         AuthUserInfoResponse userInfo = loginService.getAuthUserInfo(accessToken.getAccessToken());
         log.info("userEmail={}", userInfo.getEmail());
 
-        //사용자 이메일이 DB에 존재하지 않으면 Access 토큰, Refresh 토큰 저장 후 회원가입 실시
-        //사용자 이메일이 DB에 존재하지만 Access 토큰, Refresh 토큰이 설정되어 있지 않으면 저장 후 로그인
-        //사용자 이메일이 DB에 존재하고 Access 토큰, Refresh 토큰이 존재하는 경우 토큰 UPDATE
         Member member = loginService.getMemberById(userInfo.getEmail());
         if (member == null) {
             //사용자 이메일이 DB에 존재하지 않은 경우 회원가입 후 로그인
-            joinService.joinBySns(userInfo, accessToken);
+            joinService.joinBySns(userInfo);
             log.info("카카오 - 회원가입 후 로그인");
         } else {
-            if (member.getMemAuthId() == null) {
-                //사용자 이메일이 DB에 존재하지만 Access 토큰, Refresh 토큰이 설정되어 있지 않는 경우
-                Auth auth = loginService.saveToken(accessToken);
-                member.setMemAuthId(auth.getAuthId());
-                //탈퇴회원인 경우, 일반 회원으로 권한 변경
-                if (member.getMemStatus() == 0) {
-                    member.setMemStatus(1);
-                }
+            //탈퇴회원인 경우, 일반 회원으로 권한 변경
+            if (member.getMemStatus() == 0) {
+                member.setMemStatus(1);
                 loginService.update(member);
-                log.info("카카오 - 토큰 저장 후 로그인");
-            } else if (member.getMemAuthId() != null) {
-                //사용자 이메일이 DB에 존재하고 Access 토큰, Refresh 토큰이 존재하는 경우
-                loginService.updateToken(member.getMemAuthId(), accessToken);
-                //탈퇴회원인 경우, 일반 회원으로 권한 변경
-                if (member.getMemStatus() == 0) {
-                    member.setMemStatus(1);
-                    loginService.update(member);
-                }
-                log.info("카카오 - 토큰 갱신 후 로그인");
             }
+            log.info("카카오 - 탈퇴회원 재가입");
         }
 
         session.setAttribute("loginId", userInfo.getEmail());
@@ -144,7 +126,7 @@ public class LoginController {
         if (memId == null) {
             return "이메일이 올바르지 않습니다.";
         }
-        String loginType = loginService.checkMember(memId);
+        String loginType = loginService.checkLoginType(memId);
         log.info("loginType={}", loginType);
 
         return loginType;
@@ -152,8 +134,8 @@ public class LoginController {
 
     @PostMapping("/send-code")
     @ResponseBody
-    public String sendCode(@RequestBody Map<String, String> idMap, HttpSession session) {
-        String memId = idMap.get("id");
+    public String sendCode(@RequestBody LoginRequest loginRequest, HttpSession session) {
+        String memId = loginRequest.getId();
         String subject = ms.getMessage("mail.login-code.subject", null, null);
         String message = ms.getMessage(
                 "mail.login-code.message",
@@ -183,7 +165,6 @@ public class LoginController {
     @PostMapping("/password")
     @ResponseBody
     public String loginByPassword(@RequestBody Member member, HttpSession session) {
-        log.info("회원 아이디 = {}", member.getMemId());
         //세션에 저장된 아이디 검색
         Member findMember = loginService.getMemberById(member.getMemId());
 
@@ -204,21 +185,21 @@ public class LoginController {
 
     /**
      * 로그인 코드로 로그인
-     * @param loginCodeMap
+     * @param loginRequest
      * @param session
      * @return
      */
     @PostMapping("/login-code")
     @ResponseBody
-    public String loginByCode(@RequestBody Map<String, String> loginCodeMap, HttpSession session) {
-        String memId = loginCodeMap.get("id");
+    public String loginByCode(@RequestBody LoginRequest loginRequest, HttpSession session) {
+        String memId = loginRequest.getId();
         //회원 존재 여부 및 탈퇴 회원 여부 검증
         Member member = loginService.getMemberById(memId);
         if (member == null || member.getMemStatus() == 0) {
             throw new MemberNotFoundException(memId);
         }
 
-        String code = (String) session.getAttribute(loginCodeMap.get("loginCode"));
+        String code = (String) session.getAttribute(loginRequest.getLoginCode());
         //코드 존재 여부 및 일치 여부 검증
         if (code == null || !code.equals(memId + "ACCESS")) {
             throw new CodeMismatchException(code);
@@ -231,15 +212,15 @@ public class LoginController {
 
     /**
      * 회원가입 코드로 회원가입 후 이메일 로그인
-     * @param registerMap
+     * @param loginRequest
      * @param session
      * @return
      */
     @PostMapping("/register-code")
     @ResponseBody
-    public String loginByJoin(@RequestBody Map<String, String> registerMap, HttpSession session) {
-        String memId = registerMap.get("id");
-        String code = (String) session.getAttribute(registerMap.get("registerCode"));
+    public String loginByJoin(@RequestBody LoginRequest loginRequest, HttpSession session) {
+        String memId = loginRequest.getId();
+        String code = (String) session.getAttribute(loginRequest.getRegisterCode());
         //코드 존재 여부 및 일치 여부 검증
         if (code == null || !code.equals(memId + "ACCESS")) {
             throw new CodeMismatchException(code);
@@ -259,14 +240,14 @@ public class LoginController {
 
     /**
      * 비밀번호 초기화 코드로 로그인 - 비밀번호 초기화 후 로그인 처리
-     * @param initializeCodeMap
+     * @param loginRequest
      * @param session
      * @return
      */
     @PostMapping("/initialize-code")
     @ResponseBody
-    public String loginByInitialize(@RequestBody Map<String, String> initializeCodeMap, HttpSession session) {
-        String memId = initializeCodeMap.get("id");
+    public String loginByInitialize(@RequestBody LoginRequest loginRequest, HttpSession session) {
+        String memId = loginRequest.getId();
         //회원 존재 여부 및 탈퇴 회원 여부 검증
         Member member = loginService.getMemberById(memId);
         if (member == null || member.getMemStatus() == 0) {
@@ -274,7 +255,7 @@ public class LoginController {
         }
 
         //초기화 코드 검증 후 로그인
-        String code = (String) session.getAttribute(initializeCodeMap.get("initializeCode"));
+        String code = (String) session.getAttribute(loginRequest.getInitializeCode());
         if (code == null || !code.equals(memId + "ACCESS")) {
             throw new CodeMismatchException(code);
         } else {

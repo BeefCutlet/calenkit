@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class JoinService {
 
     private final MemberRepository memberRepository;
-    private final AuthRepository authRepository;
 
     /**
      * 이메일로 회원가입
