@@ -4,13 +4,12 @@ import com.effourt.calenkit.client.KakaoApiClient;
 import com.effourt.calenkit.client.KakaoFeignClient;
 import com.effourt.calenkit.domain.Auth;
 import com.effourt.calenkit.domain.Member;
+import com.effourt.calenkit.domain.type.LoginType;
 import com.effourt.calenkit.dto.AccessTokenRequest;
 import com.effourt.calenkit.dto.AccessTokenResponse;
 import com.effourt.calenkit.dto.AuthUserInfoResponse;
 import com.effourt.calenkit.exception.MemberNotFoundException;
-import com.effourt.calenkit.repository.AuthRepository;
 import com.effourt.calenkit.repository.MemberRepository;
-import com.effourt.calenkit.domain.type.LoginType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 public class LoginService {
 
     private final MemberRepository memberRepository;
-    private final AuthRepository authRepository;
     private final KakaoFeignClient kakaoFeignClient;
     private final KakaoApiClient kakaoApiClient;
 
@@ -156,41 +154,4 @@ public class LoginService {
                 , userInfo.getId(), userInfo.getEmail(), userInfo.getNickname(), userInfo.getProfileImage());
         return userInfo;
     }
-
-    /**
-     * Access 토큰과 Refresh 토큰 저장
-     * @param token DB에 저장할 토큰 정보를 담은 객체
-     * @return 토큰 정보 (Access Token, Refresh Token)
-     */
-    @Transactional
-    public Auth saveToken(AccessTokenResponse token) {
-        Auth auth = new Auth();
-        auth.setAuthAccess(token.getAccessToken());
-        auth.setAuthRefresh(token.getRefreshToken());
-        authRepository.save(auth);
-        return auth;
-    }
-
-    /**
-     * Access 토큰과 Refresh 토큰 UPDATE
-     * @param authId DB에 저장된 토큰 인덱스
-     * @param accessTokenResponse 액세스 토큰, 리프레시 토큰 정보를 담은 객체
-     */
-    @Transactional
-    public void updateToken(Integer authId, AccessTokenResponse accessTokenResponse) {
-        Auth auth = new Auth();
-        auth.setAuthId(authId);
-        auth.setAuthAccess(accessTokenResponse.getAccessToken());
-        auth.setAuthRefresh(accessTokenResponse.getRefreshToken());
-        authRepository.update(auth);
-    }
-
-    /**
-     * Access Token 유효기간 만료
-     * @param accessToken OAuth 로그아웃을 위한 액세스 토큰 (Bearer ${accessToken})
-     */
-    public void expireToken(String accessToken) {
-        kakaoApiClient.logout("Bearer " + accessToken);
-    }
-
 }

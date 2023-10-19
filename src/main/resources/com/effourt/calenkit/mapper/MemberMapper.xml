@@ -4,8 +4,8 @@
 <mapper namespace="com.effourt.calenkit.mapper.MemberMapper">
     <!-- SAVE -->
     <insert id="save">
-        INSERT INTO MEMBER(MEM_ID, MEM_PW, MEM_NAME, MEM_IMAGE, MEM_STATUS, MEM_LOGIN, MEM_AUTH_ID )
-        VALUES(#{memId}, #{memPw}, #{memName}, #{memImage}, 1, NOW(), #{memAuthId})
+        INSERT INTO MEMBER(MEM_ID, MEM_PW, MEM_NAME, MEM_IMAGE, MEM_STATUS, MEM_LOGIN )
+        VALUES(#{memId}, #{memPw}, #{memName}, #{memImage}, 1, NOW())
     </insert>
 
     <!-- UPDATE -->
@@ -40,9 +40,6 @@
             </if>
             <if test="memLogin != null and memLogin != ''">
                 MEM_LOGIN=#{memLogin},
-            </if>
-            <if test="memAuthId != null and memAuthId != ''">
-                MEM_AUTH_ID=#{memAuthId}
             </if>
         </set>
         WHERE MEM_ID=#{memId}

@@ -1,10 +1,7 @@
 package com.effourt.calenkit.service;
 
-import com.effourt.calenkit.domain.Auth;
 import com.effourt.calenkit.domain.Member;
-import com.effourt.calenkit.dto.AccessTokenResponse;
 import com.effourt.calenkit.dto.AuthUserInfoResponse;
-import com.effourt.calenkit.repository.AuthRepository;
 import com.effourt.calenkit.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
