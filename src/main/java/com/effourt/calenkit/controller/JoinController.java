@@ -27,6 +27,8 @@ public class JoinController {
     private final ImageUpload imageUpload;
     private final PasswordEncoder passwordEncoder;
 
+    private static final String BASIC_PROFILE_IMAGE = "s3://effourt-calenkit/profile-image/basic_profile.png";
+
     /**
      * 회원가입 페이지로 이동
      * @param memId
@@ -56,6 +58,8 @@ public class JoinController {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            member.setMemImage(BASIC_PROFILE_IMAGE);
         }
 
         //아이디(이메일), 프로필 이미지, 닉네임, 비밀번호를 회원 테이블에 저장
