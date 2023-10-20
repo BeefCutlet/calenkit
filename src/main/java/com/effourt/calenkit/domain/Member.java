@@ -9,7 +9,6 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Setter
 public class Member {
-    private Integer memAuthId;
     @NotNull
     @Pattern(regexp = "[a-z0-9]+@[a-z]+\\.[a-z]{2,3}", message = "이메일이 올바르지 않습니다.")
     private String memId;
