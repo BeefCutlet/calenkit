@@ -72,9 +72,9 @@
 - [**ETC]** 기타 애매한 경우
 
 ## ✔ERD Diagram
-![calenkit ERD](https://github.com/effourt/calenkit/assets/107570140/a2914f34-ab48-41f9-91d4-5c1ce705121c)
-## ✔DB Diagram
-![calenkit](https://github.com/effourt/calenkit/assets/107570140/d1ac1e72-9562-407a-aaf3-cfd441b4ff00)
+![ERD](https://github.com/BeefCutlet/calenkit/assets/77325024/2547d1cf-8841-4506-a98b-832f87be8a6b)
+
+
 ## 🗓️구현
 
 ### ✅ 로그인
