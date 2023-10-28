@@ -1,7 +1,10 @@
 # Calenkit
 
 ## Project Summary
-- 일정을 등록하고 다른 사람들과 공유할 수 있는 실시간 일정 공유 웹프로그램
+- 일정을 등록하고 다른 사람들과 공유할 수 있는 실시간 일정 공유 웹 애플리케이션입니다.
+- 로그인과 이미지 업로드를 담당하였으며, 일정 공유 기능 구현에 일부 기여하였습니다.
+- Spring Boot를 사용해 본 첫 프로젝트이며, OAuth와 WebSocket이라는 생소한 기술을 사용해볼 수 있었습니다. 또한, AWS 클라우드 서비스를 처음으로 이용해볼 수 있었습니다.
+- Google Slides, Notion 등을 이용하여 팀원들과 함께 구체적인 설계를 진행해볼 수 있었으며 브랜치 전략을 수립하고 커밋 규칙을 정하는 등 전보다 효과적인 협업을 해볼 수 있었습니다.
 
 ## 👨‍👨‍👧‍👦Team Member
 - 김민재 : 일정 캘린더 출력, 일정 추가 삭제 및 수정, 휴지통, 즐겨찾기, 검색, 무한 스크롤 기능
@@ -44,7 +47,7 @@
 - Notion
 - Google Slide
 - diagrams.net
-- ERD Coud
+- ERD Cloud
 - Discord
 - Code with Me (IntelliJ)
 
