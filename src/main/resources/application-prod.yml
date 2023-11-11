@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+  servlet:
+    multipart.max-file-size: 10MB
+    multipart.max-request-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail.username}
+    password: ${mail.password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+# Mybatis 설정
+mybatis:
+  type-aliases-package: com.effourt.calenkit.domain, com.effourt.calenkit.dto
+  configuration.map-underscore-to-camel-case: true
+
+# S3 설정
+cloud:
+  aws:
+    credentials:
+      access-key: ${s3.access-key}
+      secret-key: ${s3.secret-key}
+    region:
+      static: ${s3.region}
+    stack:
+      auto: false
+    s3:
+      bucket: ${s3.bucket}
