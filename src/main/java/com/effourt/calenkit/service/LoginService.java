@@ -2,7 +2,6 @@ package com.effourt.calenkit.service;
 
 import com.effourt.calenkit.client.KakaoApiClient;
 import com.effourt.calenkit.client.KakaoFeignClient;
-import com.effourt.calenkit.domain.Auth;
 import com.effourt.calenkit.domain.Member;
 import com.effourt.calenkit.domain.type.LoginType;
 import com.effourt.calenkit.dto.AccessTokenRequest;
@@ -41,7 +40,6 @@ public class LoginService {
             throw new MemberNotFoundException(memId);
         }
         Member member = new Member();
-        member.setMemId(memId);
         member.setMemPw(password);
         memberRepository.updatePassword(member);
     }
