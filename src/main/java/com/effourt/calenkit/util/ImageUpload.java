@@ -1,14 +1,14 @@
 package com.effourt.calenkit.util;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -19,9 +19,11 @@ import java.util.UUID;
 public class ImageUpload {
 
     private static final String OBJECT_PATH = "profile-image";
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-    private final AmazonS3Client amazonS3Client;
+    private static final String PUBLIC_URL = "https://storage.googleapis.com";
+
+    private final Storage storage;
+    @Value("${spring.cloud.gcp.storage.bucket}")
+    private String bucketName;
 
     /**
      * 이미지 업로드 메서드
@@ -36,32 +38,35 @@ public class ImageUpload {
         String filename = UUID.randomUUID().toString().substring(0, 8) + "_"
                 + multipartFile.getOriginalFilename();
         String filePath = OBJECT_PATH + "/" + filename;
+        String ext = multipartFile.getContentType();
         log.info("filename=" + filename);
         log.info("filePath=" + filePath);
 
-        //로컬에 파일 저장
-        String localFilePath = System.getProperty("user.home") + "/" + OBJECT_PATH;
-        File dir = new File(localFilePath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+//        //로컬에 파일 저장
+//        String localFilePath = System.getProperty("user.home") + "/" + OBJECT_PATH;
+//        File dir = new File(localFilePath);
+//        if (!dir.exists()) {
+//            dir.mkdirs();
+//        }
+//
+//        File file = new File(localFilePath + "/" + filename);
+//        if (!file.exists()) {
+//            multipartFile.transferTo(file);
+//        }
+//        //로컬 파일 삭제
+//        file.delete();
 
-        File file = new File(localFilePath + "/" + filename);
-        if (!file.exists()) {
-            multipartFile.transferTo(file);
-        }
+        //GCS에 파일 저장
+        Blob blob = storage.create(
+                BlobInfo.newBuilder(bucketName, filePath)
+                        .setContentType(ext)
+                        .build(),
+                multipartFile.getBytes()
+        );
 
-        //AWS S3에 파일 저장
-        PutObjectRequest objectRequest = new PutObjectRequest(bucket, filePath, file);
-        amazonS3Client.putObject(objectRequest);
+        String fullUrlPath = PUBLIC_URL + "/" + blob.getBucket() + "/" + blob.getName();
+        log.info("saved image url={}", fullUrlPath);
 
-        //로컬 파일 삭제
-        file.delete();
-
-        return amazonS3Client.getUrl(bucket, filePath).toString();
-    }
-
-    public String getOriginalFilename(String filename) {
-        return filename.substring(filename.indexOf("_") + 1);
+        return fullUrlPath;
     }
 }
