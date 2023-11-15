@@ -24,16 +24,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(loginInterceptor)
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/library/**", "*.ico", "/login/**", "/login/logout", "/join/**", "/error");
+                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/library/**", "*.ico", "/login/**", "/login/logout", "/join/**", "/error", "/oauth2/**");
         //유저 권한 체크 인터셉터
         registry.addInterceptor(userAuthInterceptor)
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/library/**", "*.ico", "/login/**", "/login/logout", "/join/**", "/error", "/admin/**");
+                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/library/**", "*.ico", "/login/**", "/login/logout", "/join/**", "/error", "/admin/**", "/oauth2/**");
         //관리자 권한 체크 인터셉터
         registry.addInterceptor(adminAuthInterceptor)
                 .order(3)
                 .addPathPatterns("/admin/**")
-                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/library/**", "*.ico", "/login/**", "/logout", "/join/**", "/error");
+                .excludePathPatterns("/css/**", "/js/**", "/img/**", "/library/**", "*.ico", "/login/**", "/logout", "/join/**", "/error", "/oauth2/**");
     }
 }
