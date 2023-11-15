@@ -28,6 +28,7 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-devtools'
 	
 	//메일 라이브러리
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -35,14 +36,12 @@ dependencies {
 	implementation 'org.springframework.security:spring-security-crypto:5.5.1' // 최신 버전으로 업데이트 가능
 	//OAuth2.0 라이브러리
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	//Feign 라이브러리
-	implementation "org.springframework.cloud:spring-cloud-starter-openfeign"
-	//AWS S3 라이브러리
-//	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	//GCP Storage 라이브러리
 	implementation platform("com.google.cloud:spring-cloud-gcp-dependencies:3.7.3")
 	implementation("com.google.cloud:spring-cloud-gcp-starter")
 	implementation("com.google.cloud:spring-cloud-gcp-starter-storage")
+	//Azure MySQL
+	implementation "com.azure.spring:azure-spring-boot-starter-keyvault-certificates:3.14.0"
 
 	//websocket 사용을 위한 라이브러리 - 참고 : https://spring.io/guides/gs/messaging-stomp-websocket/
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
