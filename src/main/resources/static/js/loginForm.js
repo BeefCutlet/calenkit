@@ -85,15 +85,6 @@ $("#findPasswordId").change(function () {
     showTag(visible, invisible, initial);
 });
 
-//카카오 로그인
-$("#kakaoLogin").click(function () {
-    location.href="https://kauth.kakao.com/oauth/authorize" +
-        "?client_id=6d49b86907e3887ab27ba34050122bd1" +
-        "&redirect_uri=http://3.34.25.30/login/kakao" +
-        "&response_type=code" +
-        "&scope=profile_nickname,profile_image,account_email";
-});
-
 //비밀번호로 로그인 버튼 클릭 이벤트
 $("#passwordBtn").click(function () {
     const loginId = $("#loginId").val();

@@ -22,7 +22,9 @@
                                         <div class="section text-center">
                                             <h4 class="mb-4 pb-3">로그인</h4>
                                             <div style="height: 65px;">
-                                                <img id="kakaoLogin" th:src="@{/img/kakao_login_medium_wide.png}" src="../../static/img/kakao_login_medium_wide.png" style="cursor: pointer"/>
+                                                <a href="/oauth2/authorization/kakao">
+                                                    <img id="kakaoLogin" th:src="@{/img/kakao_login_medium_wide.png}" src="../../static/img/kakao_login_medium_wide.png" style="cursor: pointer"/>
+                                                </a>
                                             </div>
                                             <form id="loginForm" method="post">
                                                 <!-- 이메일 입력창 -->
