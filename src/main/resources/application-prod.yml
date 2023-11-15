@@ -19,21 +19,30 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+#OAuth 설정 - kakao
+  security:
+    oauth2:
+      client:
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+        registration:
+          kakao:
+            client-id: ${kakao.client-id}
+            client-secret: ${kakao.client-secret}
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: ${kakao.redirect-uri}
+            client-name: Kakao
+            scope:
+              - profile_nickname
+              - profile_image
+              - account_email
 
 # Mybatis 설정
 mybatis:
   type-aliases-package: com.effourt.calenkit.domain, com.effourt.calenkit.dto
   configuration.map-underscore-to-camel-case: true
-
-# S3 설정
-cloud:
-  aws:
-    credentials:
-      access-key: ${s3.access-key}
-      secret-key: ${s3.secret-key}
-    region:
-      static: ${s3.region}
-    stack:
-      auto: false
-    s3:
-      bucket: ${s3.bucket}
