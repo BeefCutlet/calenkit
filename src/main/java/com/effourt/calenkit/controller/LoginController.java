@@ -1,15 +1,14 @@
 package com.effourt.calenkit.controller;
 
 import com.effourt.calenkit.domain.Member;
-import com.effourt.calenkit.dto.*;
+import com.effourt.calenkit.dto.EmailMessage;
+import com.effourt.calenkit.dto.LoginRequest;
 import com.effourt.calenkit.exception.CodeMismatchException;
 import com.effourt.calenkit.exception.MemberNotFoundException;
-import com.effourt.calenkit.service.JoinService;
 import com.effourt.calenkit.service.LoginService;
 import com.effourt.calenkit.util.EmailSend;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -25,13 +24,9 @@ import java.util.Map;
 public class LoginController {
 
     private final LoginService loginService;
-    private final JoinService joinService;
     private final MessageSource ms;
     private final EmailSend emailSend;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${kakao.client-id}")
-    private String kakaoClientId;
 
     /**
      * 로그인 페이지로 이동
@@ -72,45 +67,6 @@ public class LoginController {
         return "redirect:/login/form";
     }
 
-    /**
-     * 소셜 로그인
-     * @param code
-     * @param session
-     * @return
-     */
-    @GetMapping("/kakao")
-    public String loginByKakao(@RequestParam String code, HttpSession session) {
-        AccessTokenRequest accessTokenRequest = AccessTokenRequest.builder()
-                .clientId(kakaoClientId)
-                .grantType("authorization_code")
-                .redirectUri("http://localhost:8080/login/kakao")
-                .code(code)
-                .build();
-        //Access 토큰 발급
-        AccessTokenResponse accessToken = loginService.getAccessToken(accessTokenRequest);
-        //Access 토큰으로 카카오 리소스 서버에서 사용자 정보 가져오기
-        AuthUserInfoResponse userInfo = loginService.getAuthUserInfo(accessToken.getAccessToken());
-        log.info("userEmail={}", userInfo.getEmail());
-
-        Member member = loginService.getMemberById(userInfo.getEmail());
-        if (member == null) {
-            //사용자 이메일이 DB에 존재하지 않은 경우 회원가입 후 로그인
-            joinService.joinBySns(userInfo);
-            log.info("카카오 - 회원가입 후 로그인");
-        } else {
-            //탈퇴회원인 경우, 일반 회원으로 권한 변경
-            if (member.getMemStatus() == 0) {
-                member.setMemStatus(1);
-                loginService.update(member);
-            }
-            log.info("카카오 - 탈퇴회원 재가입");
-        }
-
-        session.setAttribute("loginId", userInfo.getEmail());
-        loginService.updateLastLogin(userInfo.getEmail());
-        return "redirect:/login/return-uri";
-    }
-    
     /**
      * 아이디, 비밀번호 존재 여부 체크
      * 아이디 존재 O, 비밀번호 O : PASSWORD_LOGIN

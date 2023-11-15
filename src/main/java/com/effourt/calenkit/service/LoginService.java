@@ -1,17 +1,9 @@
 package com.effourt.calenkit.service;
 
-import com.effourt.calenkit.client.KakaoApiClient;
-import com.effourt.calenkit.client.KakaoFeignClient;
 import com.effourt.calenkit.domain.Member;
 import com.effourt.calenkit.domain.type.LoginType;
-import com.effourt.calenkit.dto.AccessTokenRequest;
-import com.effourt.calenkit.dto.AccessTokenResponse;
-import com.effourt.calenkit.dto.AuthUserInfoResponse;
 import com.effourt.calenkit.exception.MemberNotFoundException;
 import com.effourt.calenkit.repository.MemberRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,8 +18,6 @@ import java.time.format.DateTimeFormatter;
 public class LoginService {
 
     private final MemberRepository memberRepository;
-    private final KakaoFeignClient kakaoFeignClient;
-    private final KakaoApiClient kakaoApiClient;
 
     /**
      * 회원 비밀번호 UPDATE
@@ -109,47 +99,5 @@ public class LoginService {
         }
 
         return loginType;
-    }
-
-    /**
-     * 인가 코드로 Access 토큰 발급
-     * @param accessTokenRequest 액세스 토큰 요청을 위한 정보를 담은 객체
-     * @return 액세스 토큰 정보를 담은 AccessTokenResponse 객체
-     */
-    public AccessTokenResponse getAccessToken(AccessTokenRequest accessTokenRequest) {
-        AccessTokenResponse accessToken = kakaoFeignClient.getAccessToken(
-                accessTokenRequest.getClientId(),
-                "authorization_code",
-                accessTokenRequest.getRedirectUri(),
-                accessTokenRequest.getCode());
-        log.info("accessToken={}", accessToken.getAccessToken());
-        log.info("refreshToken={}", accessToken.getRefreshToken());
-        return accessToken;
-    }
-
-
-    /**
-     * 인가 코드로 Access 토큰을 받아온 뒤, Access 토큰으로 카카오 리소스 서버에서 유저 정보 가져오기
-     * @param accessToken 사용자 정보 조회를 위한 액세스 토큰
-     * @return 사용자 정보를 담은 AuthUserInfoResponse 객체
-     */
-    public AuthUserInfoResponse getAuthUserInfo(String accessToken) {
-        String propertyKeys = "[\"id\",\"kakao_account.email\",\"kakao_account.profile.nickname\",\"kakao_account.profile.profile_image_url\"]";
-        String userInfoString = kakaoApiClient.getAuthUserInfo("Bearer " + accessToken, propertyKeys);
-        AuthUserInfoResponse userInfo = new AuthUserInfoResponse();
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(userInfoString);
-            userInfo.setId(jsonNode.get("id").asLong());
-            userInfo.setEmail(jsonNode.get("kakao_account").get("email").asText());
-            userInfo.setNickname(jsonNode.get("kakao_account").get("profile").get("nickname").asText());
-            userInfo.setProfileImage(jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText());
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        log.info("userId={}, userEmail={}, userNickname={}, userProfileImage={}"
-                , userInfo.getId(), userInfo.getEmail(), userInfo.getNickname(), userInfo.getProfileImage());
-        return userInfo;
     }
 }
