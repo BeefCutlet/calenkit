@@ -42,20 +42,6 @@ public class ImageUpload {
         log.info("filename=" + filename);
         log.info("filePath=" + filePath);
 
-//        //로컬에 파일 저장
-//        String localFilePath = System.getProperty("user.home") + "/" + OBJECT_PATH;
-//        File dir = new File(localFilePath);
-//        if (!dir.exists()) {
-//            dir.mkdirs();
-//        }
-//
-//        File file = new File(localFilePath + "/" + filename);
-//        if (!file.exists()) {
-//            multipartFile.transferTo(file);
-//        }
-//        //로컬 파일 삭제
-//        file.delete();
-
         //GCS에 파일 저장
         Blob blob = storage.create(
                 BlobInfo.newBuilder(bucketName, filePath)
