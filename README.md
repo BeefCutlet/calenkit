@@ -2,15 +2,15 @@
 
 ## Project Summary
 - 일정을 등록하고 다른 사람들과 공유할 수 있는 실시간 일정 공유 웹 애플리케이션입니다.
-- 로그인과 이미지 업로드를 담당하였으며, 일정 공유 기능 구현에 일부 기여하였습니다.
-- Spring Boot를 사용해 본 첫 프로젝트이며, OAuth와 WebSocket이라는 생소한 기술을 사용해볼 수 있었습니다. 또한, AWS 클라우드 서비스를 처음으로 이용해볼 수 있었습니다.
-- Google Slides, Notion 등을 이용하여 팀원들과 함께 구체적인 설계를 진행해볼 수 있었으며 브랜치 전략을 수립하고 커밋 규칙을 정하는 등 전보다 효과적인 협업을 해볼 수 있었습니다.
+- 로그인 프로세스 구현과 메일 전송 기능, 이미지 업로드 기능을 구현하였으며, 실시간 일정 공유 기능 구현에 일부 기여하였습니다.
+- Spring Boot를 사용해 본 첫 프로젝트이며, OAuth와 WebSocket이라는 생소한 기술을 사용해볼 수 있었습니다. 또한, 클라우드 서비스를 처음으로 이용해볼 수 있었습니다.
+- Google Slides, Notion 등을 이용하여 팀원들과 함께 구체적인 설계를 진행해볼 수 있었으며 브랜치 전략을 수립하고 커밋 규칙을 정하는 등의 팀 프로젝트 경험을 해볼 수 있었습니다.
 
 ## 👨‍👨‍👧‍👦Team Member
 - 김민재 : 일정 캘린더 출력, 일정 추가 삭제 및 수정, 휴지통, 즐겨찾기, 검색, 무한 스크롤 기능
 - 라재희 : 일정 메인 및 상세 레이아웃, 일정 초대 및 공유, 일정 내용 변경 실시간 반영, 푸시 알림
-- 이진규 : 회원 개인정보 관리(마이페이지), 회원 관리(관리자페이지), 이미지 전송 기능
-- 오세욱 : 카카오 소셜로그인, 회원가입, 이메일 전송 기능
+- 이진규 : 회원 개인정보 관리(마이페이지), 회원 관리(관리자페이지)
+- 오세욱 : 카카오 소셜로그인, 회원가입, 이메일 전송 기능, 이미지 저장 기능
 
 ## 📙WIKI
 - calenkit의 부가적 설명은 WIKI를 이용했습니다.
@@ -29,8 +29,6 @@
   <img alt="java" src="https://img.shields.io/badge/-java-3A75AF?style=flat-square&logo=java&logoColor=white" />
   <img alt="spring" src="https://img.shields.io/badge/-spring-6DB33F?style=flat-square&logo=spring&logoColor=white" />
   <img alt="springboot" src="https://img.shields.io/badge/-springboot-6DB33F?style=flat-square&logo=springboot&logoColor=white" />
-  <img alt="springsecurity" src="https://img.shields.io/badge/-springsecurity-6DB33F?style=flat-square&logo=springsecurity&logoColor=white" />
-  <img alt="springcloud" src="https://img.shields.io/badge/-springcloud-6DB33F?style=flat-square&logo=springcloud&logoColor=white" />
   <img alt="gradle" src="https://img.shields.io/badge/-gradle-02303A?style=flat-square&logo=gradle&logoColor=white" />
 </p>
 <p>
@@ -93,7 +91,7 @@
 ### 이미지 저장 기능 구현
 - 회원가입 시, 혹은 프로필 수정 시에 프로필 이미지를 설정하고 저장하는 기능을 구현하였습니다. 이 때, 이미지 파일의 저장 위치는 로컬에 저장하도록 구현했었습니다.
 - 그러나 배포한 뒤에는 로컬에 이미지를 계속 저장하다보면 서버의 저장공간 부족해질 가능성이 있었고, 관리도 불편하였습니다. 그래서 외부 저장소에 이미지를 저장하고 웹페이지를 렌더링할 때 불러올 필요가 있었습니다.
-- 해결 방법으로 외부 저장소인 Amazon S3에 이미지를 저장하고 해당 이미지 경로에서 이미지를 찾아서 보여줄 수 있도록 구현하였습니다.
+- 해결 방법으로 외부 저장소인 Google Cloud Storage에 이미지를 저장하고 해당 이미지 경로에서 이미지를 찾아서 보여줄 수 있도록 구현하였습니다.
 
 
 ### 카카오 소셜 로그인 기능 구현을 구현
@@ -101,6 +99,8 @@
 - 기존 서버의 API로는 외부와 통신이 불가능하였고, 서버 외부의 API와 통신할 수 있는 방법을 찾아야했습니다.
 - OpenFeign은 인터페이스를 만들기만 하면 외부의 API를 쉽게 호출할 수 있다는 장점이 있었습니다.
 - OpenFeign을 사용하여 Kakao 인증 서버 및 리소스 서버 API를 호출하여 회원의 정보를 받아오고, 해당 정보를 바탕으로 세션 설정 및 회원가입을 진행하도록 구현할 수 있었습니다.
+- 다만, OpenFeign을 사용하여 외부 API를 호출하면, API 스펙을 직접 구현해야 했기에 인증 서버와 리소스 서버 API 호출용 클래스와 DTO까지 총 6개의 클래스가 필요했습니다. 이로 인해, 관리해야 할 클래스가 많아서 로직 파악이 복잡해졌습니다.
+- 문제를 해결하고자 OAuth2.0 인증을 보다 쉽게 할 수 있는 방법을 찾아보았고, OAuth Client 라이브러리를 이용하면 OAuth2.0 인증을 위한 클래스를 제공받아 서비스 클래스 하나로 인증을 할 수 있다는 사실을 알게되었습니다. OAuth Client를 이용한 인증으로 리팩토링 함으로써 인증을 위한 6개의 클래스가 1개의 클래스로 줄어들어 유지보수의 효율성을 높일 수 있었습니다.
 
 
 ## 🗓️구현
